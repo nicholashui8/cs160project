@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Frontend for cs160project",
+  "main": "index.js",
+  "scripts": {
+    "test": "frontendtest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholashui8/cs160project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicholashui8/cs160project/issues"
+  },
+  "homepage": "https://github.com/nicholashui8/cs160project#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
