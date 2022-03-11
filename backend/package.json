@@ -1,7 +1,7 @@
 {
-  "name": "frontend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Frontend for cs160project",
+  "description": "backend for cs160project",
   "main": "index.js",
   "scripts": {
     "build": "tsc --project ./",
@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/nicholashui8/cs160project#readme",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "mongoose": "^6.2.4",
+    "nodemon": "^2.0.15"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
