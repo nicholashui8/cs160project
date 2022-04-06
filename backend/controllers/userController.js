@@ -6,17 +6,17 @@ const User = require('../models/userModel')
 // Generate JWT
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
+        expiresIn: '90d'
     })
 }
 
-// @description     Register new user
-// @route           POST /api/users
+// @description     Register new user, 
+// @route           POST /user-api/user
 // @access          Public
 const registerUser = asyncHandler(async (req, res) => {
-    const { name, studentId, email, password } = req.body
+    const { name, schoolId, email, password } = req.body
 
-    if(!name || !studentId || !email || !password) {
+    if(!name || !schoolId || !email || !password) {
         res.status(400)
         throw new Error("Please add all fields") 
     }
@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // create the user
     const user = await User.create({
         name,
-        studentId,
+        schoolId,
         email,
         password: hashedPassword
     })
@@ -45,7 +45,8 @@ const registerUser = asyncHandler(async (req, res) => {
         res.status(201).json({
             _id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: generateToken(user._id)
         })
     } else {
         res.status(400)
@@ -54,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 // @description    Login a user
-// @route          POST /api/users/login
+// @route          POST /user-api/user/login
 // @access         Public
 const loginUser = asyncHandler(async (req, res) => {
     const {email, password} = req.body
@@ -66,7 +67,8 @@ const loginUser = asyncHandler(async (req, res) => {
         res.json({
             _id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: generateToken(user._id)
         })
     } else {
         res.status(400)
@@ -75,14 +77,61 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 // @description    Get User data
-// @route          GET /api/users/me
+// @route          GET /user-api/user/profile
 // @access         Private
 const getMe = asyncHandler(async (req, res) => {
-    res.json({message: 'user data fetched'})
+    res.status(200).json(req.user)
+})
+
+// @description    Update a User
+// @route          PUT /user-api/user/:name?:id
+// @access         Public
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id)
+
+    if (!user) {
+        res.status(400)
+        throw new Error('User not found')
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+        new: true
+    })
+
+    res.status(200).json(updatedUser)
+})
+
+// @description    Deletes a User
+// @route          DELETE /user-api/user/:name?:id
+// @access         Public
+const deleteUser = asyncHandler(async (req, res) => {
+    await User.findOneAndDelete({_id: req.params.id}, (err, user) => {
+        if (err) {
+            return res.status(400).json({success: false, error: err})
+        }
+
+        if (!user) {
+            return res.status(400).json({success: false, error: 'User not found'})
+        }
+
+        return res.status(200).json({success: true, data: user})
+    }).catch(err => console.log(err))
+})
+
+// @description    Get all Users
+// @route          GET /user-api/users
+// @access         Public
+const getAllUsers = asyncHandler(async (req, res) => {
+    const users = await User.find({})
+
+    res.status(200).json(users)
 })
 
 module.exports = {
     registerUser,
     loginUser,
     getMe,
+    updateUser,
+    deleteUser,
+    getAllUsers
 }

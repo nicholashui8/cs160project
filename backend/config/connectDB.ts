@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+// setting up the database
+import mongoose from 'mongoose'
 
 const connDB = async () => {
     try {

@@ -4,6 +4,15 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
+.App {
+  background-color: dimgray;
+  height: 100%;
+}
+
+.LoginPage {
+  background-color: dimgray;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -88,6 +97,7 @@ h3 {
 
 .heading p {
   color: #828282;
+  text-align: center;
 }
 
 .goals {

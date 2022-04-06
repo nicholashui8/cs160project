@@ -1,22 +1,32 @@
-const mongoose = require('moongose')
+const mongoose = require('mongoose')
 
 const courseSchema = mongoose.Schema({
-    courseID: {
+    courseId: { // ex) CS160
         type: String,
-        required: true
+        required: [true, "Please add course id"]
     },
 
-    courseName: {
+    sectionId: {
         type: String,
-        required: true
+        required: [true, "Please add the section id"]
+    },
+
+    courseName: { // Software Engineering
+        type: String,
+        required: [true, "Please add the name of the course"]
     },
 
     courseDescription: {
         type: String,
-        required: true 
+        required: [true, "Please add the description of the course"] 
     },
 
-    createdBy: {
+    createdByEmail: {
+        type: String,
+        required: true
+    },
+
+    createdById: {
         type: String,
         required: true
     },
@@ -26,5 +36,8 @@ const courseSchema = mongoose.Schema({
         required: false,
         ref: 'Assignment' 
     }
+},
+{
+    timestamps: true
 })
 module.exports = mongoose.model('Course', courseSchema)

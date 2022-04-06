@@ -25,6 +25,12 @@ const userSchema = mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         required: false,
         ref: 'Course'
+    },
+
+    grades: {
+        type: [mongoose.Schema.Types.ObjectId],
+        required: false,
+        ref: 'Grade'
     }
 },
 {
