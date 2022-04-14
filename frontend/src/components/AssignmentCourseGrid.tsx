@@ -6,7 +6,7 @@ export default function AssignmentCourseGrid({ data }: any) {
     return (
         <div>
             <div className="flex my-3 ">
-                <div className='basis-1/3 mx-2 text-slate-300 hover:text-slate-100'>
+                <div className='basis-1/3 mx-2 text-slate-900 dark:text-slate-300 hover:text-slate-100'>
                     <Link to="/assignmentRoute"> {data.assignmentName}</Link>
                 </div>
                 <div className='basis-1/3'></div>

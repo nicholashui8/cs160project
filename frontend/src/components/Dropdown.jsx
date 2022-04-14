@@ -9,7 +9,7 @@ export default function Dropdown() {
     return (
         <Menu as="div" className="relative inline-block text-left">
             <div>
-                <Menu.Button className="0 inline-flex justify-center text-slate-200">
+                <Menu.Button className="0 inline-flex justify-center text-gray-300 dark:text-slate-200">
                     Courses
                     <ChevronDownIcon className="mt-1 mr-1 ml-2 h-5 w-5" aria-hidden="true" />
                 </Menu.Button>
@@ -24,7 +24,7 @@ export default function Dropdown() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-100 scale-95"
             >
-                <Menu.Items className=" origin-top-left absolute left  mt-3 w-56 rounded-md py-1 shadow-lg bg-gray-500 ">
+                <Menu.Items className=" origin-top-left absolute left  mt-3 w-56 rounded-md py-1 shadow-lg bg-gray-400 dark:bg-gray-600 ">
                     {
                         courses.map((course) => {
                             return (
@@ -32,7 +32,7 @@ export default function Dropdown() {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link to='courseRoute'>
-                                                <div className='rounded-md hover:bg-gray-400 p-3 py-3'>
+                                                <div className='rounded-md p-3 py-3'>
                                                     {course.courseId}
                                                 </div>
                                             </Link>
