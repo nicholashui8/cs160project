@@ -1,15 +1,18 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import Dropdown from './Dropdown';
 import { XIcon, MenuIcon } from '@heroicons/react/solid'
 import { logout, reset } from '../features/service/authSlice'
+import Switcher from './Switcher';
+
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 function Navbar() {
+
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const onLogout = () => {
@@ -18,8 +21,9 @@ function Navbar() {
         navigate('/')
     }
 
+
     return (
-        <Disclosure as="nav" className='bg-gray-800'>
+        <Disclosure as="nav" className='bg-gray-400 dark:bg-gray-800'>
             {({ open }) => (
                 <>
                     <div className="mx-auto px-2 sm:px-6 lg:px-8">
@@ -45,15 +49,18 @@ function Navbar() {
                                 </div>
                                 <div className="hidden sm:block sm:ml-8">
                                     <div className="flex space-x-4">
-                                        <a href="/home" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">Home</a>
+                                        <a href="/home" className="text-gray-300 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">Home</a>
                                         
-                                        <div className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">
+                                        <div className="text-gray-100 hover:bg-gray-400 dark:hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">
                                             <Dropdown/>
                                         </div>
 
-                                        <a href="/messages" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">Messages</a>
+                                        <a href="/messages" className="text-gray-300 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">Messages</a>
                                     </div>
                                 </div>
+                            </div>
+                            <div>
+                               <Switcher/>
                             </div>
                             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                 <Menu as="div" className="ml-3 relative">
@@ -74,12 +81,12 @@ function Navbar() {
                                         leaveFrom="transform opacity-100 scale-100"
                                         leaveTo="transform opacity-0 scale-95"
                                     >
-                                        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-500  ring-1 ring-black ring-opacity-5 focus:outline-none">
                                             <Menu.Item>
                                                 {({ active }) =>
                                                     <a
                                                         href="/profile"
-                                                        className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                                                        className={classNames(active ? 'bg-gray-200 dark:bg-gray-600' : '', 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200')}
                                                     >
                                                         Your Profile
                                                     </a>
@@ -89,7 +96,7 @@ function Navbar() {
                                                 {({ active }) =>
                                                     <a
                                                         href='/'
-                                                        className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                                                        className={classNames(active ? 'bg-gray-200 dark:bg-gray-600' : '', 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200')}
                                                         onClick={onLogout}
                                                     >
                                                         Sign out

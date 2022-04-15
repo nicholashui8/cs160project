@@ -35,7 +35,7 @@ function Home() {
     return (
         <div>
             <Navbar />
-            <div className='flex justify-center bg-gray-700 h-screen'>
+            <div className='flex justify-center bg-gray-200 dark:bg-gray-700 h-screen'>
                 <div className=" max-w-screen-2xl mt-9 grid grid-flow-row auto-rows-min xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2">
                     {
                         user.userType === 'instructor' ?
