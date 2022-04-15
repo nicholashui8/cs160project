@@ -26,8 +26,8 @@ const createCourse = asyncHandler(async (req, res) => {
         sectionId,
         courseName,
         courseDescription,
-        createdByEmail,     // replace after testing : req.user.name,
-        createdById         // replace after testing : req.user.schoolId
+        createdByEmail,     
+        createdById         
     })
 
 

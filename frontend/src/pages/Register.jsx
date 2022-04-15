@@ -10,11 +10,12 @@ function Register() {
        name: '',
        email: '',
        schoolId: '',
+       isInstructor: '',
        password: '',
        password2: '' 
     })
     
-    const { name, email, schoolId, password, password2 } = formData
+    const { name, email, schoolId, isInstructor, password, password2 } = formData
     
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -42,13 +43,17 @@ function Register() {
 
     const onSubmit = (e) => {
         e.preventDefault()
-
         if (password !== password2) {
             toast.error('Passwords do not match')
+        } else if (isInstructor.toLowerCase() !== 'instructor' && isInstructor.toLowerCase() !== 'student') {
+            toast.error('Enter either \'Instructor\' or \'Student\' as your occupation')
         } else {
+            const userType = isInstructor.toLowerCase()
+
             const userData = {
                 name,
                 email,
+                userType,
                 schoolId,
                 password
             }
@@ -112,6 +117,17 @@ function Register() {
                                     name='password2'
                                     value={password2}
                                     placeholder="Confirm password"
+                                    onChange={onChange}
+                                />
+                            </div>
+                            <div>
+                                <input  
+                                    type="text"
+                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                                    id='isInstructor'
+                                    name='isInstructor'
+                                    value={isInstructor}
+                                    placeholder="Enter your occupation: 'Instructor' or 'Student'"
                                     onChange={onChange}
                                 />
                             </div>
