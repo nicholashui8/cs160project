@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { createCourse, reset } from '../features/service/courseSlice'
+import { getCourses, createCourse, reset } from '../features/service/courseSlice'
 import { toast } from 'react-toastify'
 import Navbar from '../components/Navbar'
 
@@ -22,7 +22,7 @@ function CreateCourse() {
   const dispatch = useDispatch()
 
   const { user } = useSelector((state) => state.auth)
-  const { courses, isLoading, isSuccess, isError, message } = useSelector((state) => state.courses)
+  const { courses, isLoading, isSuccessCourseCreated, isError, message } = useSelector((state) => state.courses)
 
   useEffect(() => {
     if (isError) {
@@ -37,13 +37,16 @@ function CreateCourse() {
       navigate('/home')
     }
 
-    if (isSuccess) {
+    if (isSuccessCourseCreated) {
       navigate('/home')
     }
+    
+    dispatch(getCourses())
 
-    dispatch(reset())
-
-  }, [user, isError, isSuccess, message, dispatch, navigate])
+    return () => {
+      dispatch(reset())
+    }
+  }, [user, isError, isSuccessCourseCreated, message, dispatch, navigate])
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -70,7 +73,7 @@ function CreateCourse() {
   return (
     <div>
       <Navbar />
-      <div className='flex justify-center bg-gray-700 h-screen'>
+      <div className='flex justify-center bg-gray-200 dark:bg-gray-700 h-screen overflow-scroll'>
         <section className="max-w-screen-4xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
             <h1 className="text-3xl font-bold text-white capitalize dark:text-white">Create new Course</h1>
               <form onSubmit={onSubmit}>

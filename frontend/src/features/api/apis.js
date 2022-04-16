@@ -54,7 +54,23 @@ const getCourses = async (token) => {
     }
 
     const response = await axios.get(COURSE_API_URL + 'user/courses', config)
+    return response.data
+}
 
+/* Course ASSIGNMENT Calls */
+const ASSIGNMENT_API_URL = '/assignment-api/'
+
+// Get assignments from a course
+const getAssignments = async (courseData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    console.log('config ', config)
+
+    const response = await axios.get(ASSIGNMENT_API_URL + 'course/assignments', courseData)
     return response.data
 }
 
@@ -63,7 +79,8 @@ const apiServices = {
     login,
     logout,
     createCourse,
-    getCourses
+    getCourses,
+    getAssignments
 }
 
 export default apiServices

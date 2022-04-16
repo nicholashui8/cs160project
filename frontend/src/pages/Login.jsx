@@ -45,12 +45,13 @@ function Login() {
             password
         }
 
+        console.log(userData)
         dispatch(login(userData))
     }
     
     return (
         <>
-            <div className="bg-gray200 dark:bg-gray-700 h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="bg-gray-200 dark:bg-gray-700 h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8">
                     <div>
                         <h1 className="mt-3 text-center text-4xl font-extrabold text-cyan-500">CS160 Project</h1>

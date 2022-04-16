@@ -4,7 +4,8 @@ import apiServices from '../api/apis'
 const initialState = {
     courses: [],
     isError: false,
-    isSuccess: false,
+    isSuccess: false,               // for getting all user courses
+    isSuccessCourseCreated: false,  // for creaing a course
     isLoading: false,
     message: ''
 }
@@ -45,7 +46,7 @@ export const courseSlice = createSlice({
             })
             .addCase(createCourse.fulfilled, (state, action) => {
                 state.isLoading = false
-                state.isSuccess = true
+                state.isSuccessCourseCreated = true
                 state.courses.push(action.payload)
             })
             .addCase(createCourse.rejected, (state, action) => {

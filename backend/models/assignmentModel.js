@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const assignmentSchema = mongoose.Schema({
-    assingmentID: {     // asignmentID, maybe use documentID as its ID
+    assignmentId: {     // asignmentID, maybe use documentID as its ID
         type: String,
         required: true
     },
