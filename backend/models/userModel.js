@@ -6,6 +6,11 @@ const userSchema = mongoose.Schema({
         required: [true, 'Please add a name']
     }, 
 
+    userType: {
+        type: String,
+        required: [true, 'Please add userType: instructor or student']
+    },
+    
     schoolId: {
         type: String,
         required: [true, 'Please add a school ID']

@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 
+const Assignment = require('../models/assignmentModel')
 const Course = require('../models/courseModel')
 const User = require('../models/userModel')
 
@@ -14,6 +15,13 @@ const createCourse = asyncHandler(async (req, res) => {
         throw new Error("Please add all fields")
     }
 
+    const userExists = await User.findOne({email: createdByEmail, schoolId: createdById})
+
+    if (!userExists) {
+        res.status(400)
+        throw new Error("User does not exist")
+    }
+
     const courseExists = await Course.findOne({courseId: courseId, sectionId: sectionId, courseName: courseName})
 
     if(courseExists) {
@@ -26,10 +34,9 @@ const createCourse = asyncHandler(async (req, res) => {
         sectionId,
         courseName,
         courseDescription,
-        createdByEmail,     // replace after testing : req.user.name,
-        createdById         // replace after testing : req.user.schoolId
+        createdByEmail,     
+        createdById         
     })
-
 
     if (!course) {
         res.status(400)
@@ -37,13 +44,14 @@ const createCourse = asyncHandler(async (req, res) => {
     }
 
     // req.user.id
-    await User.findByIdAndUpdate(req.params.id, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
+    await User.findOneAndUpdate({schoolId: createdById, email: createdByEmail}, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
         if (err) {
             return res.status(400).json({success: false, error: err})
         }
 
         if (!user) {
-            return res.status(400).json({success: false, error: 'User not found'})
+            res.status(400)
+            throw new Error('User not found')
         }
 
         return res.status(200).json({success:true, data: user})
@@ -52,7 +60,7 @@ const createCourse = asyncHandler(async (req, res) => {
 })
 
 // @description     Get courses from a user, 
-// @route           POST /course-api/user/courses
+// @route           GET /course-api/user/courses
 // @access          Private
 const getCoursesFromUser = asyncHandler(async (req, res) => {
     const user = req.user
@@ -60,7 +68,18 @@ const getCoursesFromUser = asyncHandler(async (req, res) => {
     const courses = []
 
     for (let index = 0; index < user.courses.length; index++) {
-        courses.push(await Course.findById(user.courses[index]))
+        const course = await(Course.findById(user.courses[index]))
+        // console.log(index, course)
+
+        const assignments = []
+        for (let sub_index = 0; sub_index < course.assignments.length; sub_index++) {
+            assignments.push(await Assignment.findById(course.assignments[sub_index]))
+        }
+
+        courses.push({course, assignments})
+
+        //console.log(courses[index].course)
+        //console.log(courses[index].assignments)
     }
 
     res.status(200).json(courses)

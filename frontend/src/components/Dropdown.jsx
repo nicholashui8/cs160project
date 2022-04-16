@@ -24,16 +24,16 @@ export default function Dropdown() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-100 scale-95"
             >
-                <Menu.Items className=" origin-top-left absolute left  mt-3 w-56 rounded-md py-1 shadow-lg bg-gray-400 dark:bg-gray-600 ">
+                <Menu.Items className=" origin-top-left absolute left mt-3 w-56 rounded-md py-1 shadow-lg bg-gray-400 dark:bg-gray-600">
                     {
                         courses.map((course) => {
                             return (
                                 <div className="opacity-100 rounded-md">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <Link to='courseRoute'>
+                                            <Link className="text-slate-900 hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-300" to='courseRoute'>
                                                 <div className='rounded-md p-3 py-3'>
-                                                    {course.courseId}
+                                                    {course.course.courseId} Sec {course.course.sectionId}
                                                 </div>
                                             </Link>
                                         )
