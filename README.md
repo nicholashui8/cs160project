@@ -10,3 +10,9 @@ password: 0123 <br>
 schoolId: 1234 <br>
 name: student <br>
 
+To view from a different perspective and be able to create courses <br>
+Use these credentials <br> 
+email: professor@gmail.com <br>
+Password: 123456 <br>
+schoolId: 1234 <br>
+name: professor <br>
