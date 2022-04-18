@@ -6,7 +6,7 @@ const User = require('../models/userModel')
 
 // @description     Create a course, 
 // @route           POST /courses-api/course
-// @access          Public
+// @access          Private
 const createCourse = asyncHandler(async (req, res) => {
     const {courseId, sectionId, courseName, courseDescription, createdByEmail, createdById} = req.body
 
@@ -59,6 +59,31 @@ const createCourse = asyncHandler(async (req, res) => {
 
 })
 
+// @description     Get a course from a user, 
+// @route           GET /course-api/user/course
+// @access          Private
+const getCourseFromUser = asyncHandler(async (req, res) => {
+    const { _id } = req.body
+    
+    if (!_id) {
+        res.status(400)
+        throw new Error("No course id exists")
+    }
+
+    const course = await Course.findById(_id)
+    const assignments = []
+
+    for (let index = 0; index < course.assignments.length; index++) {
+        assignments.push(await Assignment.findById(course.assignments[index]))
+    }
+
+    const courseInfo = {course, assignments}
+    
+    console.log(courseInfo)
+
+    res.status(200).json(courseInfo)
+})
+
 // @description     Get courses from a user, 
 // @route           GET /course-api/user/courses
 // @access          Private
@@ -93,5 +118,6 @@ const addCourseToUser = asyncHandler(async (req, res) => {
 
 module.exports = {
     createCourse,
+    getCourseFromUser,
     getCoursesFromUser
 }

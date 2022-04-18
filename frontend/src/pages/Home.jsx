@@ -60,8 +60,8 @@ function Home() {
                     }
                     {   
                         courses.map((course) => {
-                            console.log(course.course)
-                            console.log(course.assignments)
+                            console.log(course.course._id)
+                            //console.log(course.assignments)
                             return <Coursegrid data={course} />
                         })
                     }

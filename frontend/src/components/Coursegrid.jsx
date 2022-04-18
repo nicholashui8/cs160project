@@ -14,7 +14,7 @@ export default function Coursegrid({ data }) {
             </div>
             {   
                 data.assignments.map((assignment) => {
-                    console.log(assignment)
+                    //console.log(assignment)
                     return <AssignmentCourseGrid data={assignment} />
             })}
         </div>
