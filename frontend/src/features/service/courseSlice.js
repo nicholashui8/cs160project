@@ -4,8 +4,9 @@ import apiServices from '../api/apis'
 const initialState = {
     courses: [],
     isError: false,
-    isSuccess: false,               // for getting all user courses
-    isSuccessCourseCreated: false,  // for creaing a course
+    isSuccess: false,               // for getting all courses from user; Home page
+    isSuccessSingle: false,         // for getting a course from user;    Course page
+    isSuccessCourseCreated: false,  // for creaing a course;              Create Course page
     isLoading: false,
     message: ''
 }
@@ -20,6 +21,18 @@ export const createCourse = createAsyncThunk('courses/create', async (courseData
         return thunkAPI.rejectWithValue(message)
     }
 
+})
+
+// Get single course information: for course page
+// courseData should be courseData = { course._id } when calling it from the coursePage url
+export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(courseData, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await apiServices.getCourse(courseData, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
 })
 
 // Get user courses
@@ -50,6 +63,19 @@ export const courseSlice = createSlice({
                 state.courses.push(action.payload)
             })
             .addCase(createCourse.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(getCourse.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(getCourse.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccessSingle = true
+                state.courses = action.payload
+            })
+            .addCase(getCourse.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload
