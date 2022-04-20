@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { login, reset} from '../features/service/authSlice'
+import Spinner from '../components/Spinner'
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -49,6 +50,10 @@ function Login() {
         dispatch(login(userData))
     }
     
+    if (isLoading) {
+        return <Spinner />
+    }
+
     return (
         <>
             <div className="bg-gray-200 dark:bg-gray-700 h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

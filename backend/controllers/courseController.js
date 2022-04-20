@@ -63,14 +63,14 @@ const createCourse = asyncHandler(async (req, res) => {
 // @route           GET /course-api/user/course
 // @access          Private
 const getCourseFromUser = asyncHandler(async (req, res) => {
-    const { _id } = req.body
+    const { id } = req.params
     
-    if (!_id) {
+    if (!id) {
         res.status(400)
         throw new Error("No course id exists")
     }
 
-    const course = await Course.findById(_id)
+    const course = await Course.findById(id)
     const assignments = []
 
     for (let index = 0; index < course.assignments.length; index++) {
@@ -79,7 +79,7 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
 
     const courseInfo = {course, assignments}
     
-    console.log(courseInfo)
+    //console.log(courseInfo)
 
     res.status(200).json(courseInfo)
 })

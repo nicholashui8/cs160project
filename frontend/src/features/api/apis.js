@@ -9,6 +9,7 @@ const register = async (userData) => {
 
     if (response.data) {
         localStorage.setItem('user', JSON.stringify(response.data))
+        localStorage.setItem('token', JSON.stringify(response.data.token))
     }
 
     return response.data
@@ -20,6 +21,7 @@ const login = async (userData) => {
 
     if (response.data) {
         localStorage.setItem('user', JSON.stringify(response.data))
+        localStorage.setItem('token', JSON.stringify(response.data.token))
     }
 
     return response.data
@@ -28,6 +30,8 @@ const login = async (userData) => {
 // Logout user
 const logout = () => {
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    localStorage.removeItem('theme')
 }
 
 /* Course API Calls */
@@ -46,14 +50,16 @@ const createCourse = async (courseData, token) => {
 }
 
 // Get one course from user
-const getCourse = async (courseData, token) => {
+const getCourse = async (id, token) => {
     const config = {
         headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
             Authorization: `Bearer ${token}`
         }
     }
 
-    const response = await axios.get(COURSE_API_URL + 'user/course', courseData, config)
+    const response = await axios.get(COURSE_API_URL + `user/course/${id}`, config)
     return response.data
 }
 
@@ -61,6 +67,8 @@ const getCourse = async (courseData, token) => {
 const getCourses = async (token) => {
     const config = {
         headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
             Authorization: `Bearer ${token}`
         }
     }

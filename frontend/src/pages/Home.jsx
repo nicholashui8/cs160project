@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Navbar from '../components/Navbar'
+import Spinner from '../components/Spinner'
 import Coursegrid from '../components/Coursegrid'
 import { getCourses, reset } from '../features/service/courseSlice'
 import { toast } from 'react-toastify'
@@ -30,6 +31,10 @@ function Home() {
             dispatch(reset())
         }
     }, [user, navigate, isError, message, dispatch])
+    
+    if (isLoading) {
+        return <Spinner />
+    }
     
     return (
         <div>
