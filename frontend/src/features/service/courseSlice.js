@@ -3,6 +3,7 @@ import apiServices from '../api/apis'
 
 const initialState = {
     courses: [],
+    singleCourse: null,
     isError: false,
     isSuccess: false,               // for getting all courses from user; Home page
     isSuccessSingle: false,         // for getting a course from user;    Course page
@@ -25,10 +26,12 @@ export const createCourse = createAsyncThunk('courses/create', async (courseData
 
 // Get single course information: for course page
 // courseData should be courseData = { course._id } when calling it from the coursePage url
-export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(courseData, thunkAPI) => {
+export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(id, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
-        return await apiServices.getCourse(courseData, token)
+        console.log("getCourse:", token)
+        console.log('courseData:', id)
+        return await apiServices.getCourse(id, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
@@ -39,6 +42,7 @@ export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(cou
 export const getCourses = createAsyncThunk('courses/getCoursesFromUser', async(_, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
+        console.log(token)
         return await apiServices.getCourses(token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -50,7 +54,14 @@ export const courseSlice = createSlice({
     name: 'courses',
     initialState,
     reducers: {
-        reset: (state) => initialState,
+        reset: (state) => {
+            state.isError = false
+            state.isSuccess = false               // for getting all courses from user; Home page
+            state.isSuccessSingle = false         // for getting a course from user;    Course page
+            state.isSuccessCourseCreated = false  // for creaing a course;              Create Course page
+            state.isLoading = false
+            state.message = ''
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -73,7 +84,7 @@ export const courseSlice = createSlice({
             .addCase(getCourse.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.isSuccessSingle = true
-                state.courses = action.payload
+                state.singleCourse = action.payload
             })
             .addCase(getCourse.rejected, (state, action) => {
                 state.isLoading = false

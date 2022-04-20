@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getCourses, createCourse, reset } from '../features/service/courseSlice'
 import { toast } from 'react-toastify'
 import Navbar from '../components/Navbar'
+import Spinner from '../components/Spinner'
 
 function CreateCourse() {
 
@@ -69,6 +70,10 @@ function CreateCourse() {
 
     dispatch(createCourse(courseData))
   }
+
+  if (isLoading) {
+    return <Spinner />
+}
 
   return (
     <div>

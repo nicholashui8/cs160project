@@ -1,52 +1,62 @@
 import Navbar from "../components/Navbar"
-import { useEffect, useState } from 'react'
+import Spinner from "../components/Spinner"
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { getCourse, getCourses, reset } from '../features/service/courseSlice'
+import { getCourse, reset } from '../features/service/courseSlice'
 import { toast } from 'react-toastify'
 
 function Course(){
-    const [course, setCourse] = useState({})
-    //get course id from route
-    let { id } = useParams();
+
+    const params = useParams()
+    //const id = params.id
     
-    console.log("id:" + id);
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const { user } = useSelector((state) => state.auth)
-    const { courses, isLoading, isError, message } = useSelector((state) => state.courses)
-    
+    const { singleCourse, isLoading, isError, message } = useSelector((state) => state.courses)
+
     useEffect(() => {
-        console.log("use effect called")
         if (isError) {
-            console.log(message)
             toast.error(message)
         }
 
         if (!user) {
             navigate('/')
         }
-        
-        const courseData = { id }
-        console.log(id)
-        dispatch(getCourse(courseData))
 
-        console.log(courses)
+        const id = params.id
+
+        dispatch(getCourse(id))
+
         return () => {
             dispatch(reset())
         }
-    },  [])
+    }, [user, isError, message, dispatch, navigate, params.id])
 
-    return (
+    if (isLoading) {
+        return <Spinner />
+    }
+
+    return !singleCourse ? 
+    (
+        <div>
+            <Navbar />
+        </div>
+    )
+    :
+    (
         <div>
             <Navbar />
             <div>
                 <div className="mt-10 ml-10 text-4xl">
-                    {/* { `${courses.course.courseId}: ${courses.course.courseName}`} */}
+                    { 
+                        `${singleCourse.course.courseId}: ${singleCourse.course.courseName}` 
+                    }
                 </div>
                 <div className="">
-                    {course.courseDescription}
+                    {console.log(singleCourse)}
                 </div>
                 <div className="text-3xl font-semibold">
                     Notifications

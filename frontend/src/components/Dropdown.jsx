@@ -31,7 +31,7 @@ export default function Dropdown() {
                                 <div className="opacity-100 rounded-md">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <Link className="text-slate-900 hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-300" to='courseRoute'>
+                                            <Link className="text-slate-900 hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-300" to={`/course/${course.course._id}`}>
                                                 <div className='rounded-md p-3 py-3'>
                                                     {course.course.courseId} Sec {course.course.sectionId}
                                                 </div>
