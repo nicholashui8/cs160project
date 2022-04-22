@@ -4,12 +4,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 
+// Finished
 export default function Dropdown() {
     const { courses } = useSelector((state) => state.courses)
     return (
         <Menu as="div" className="relative inline-block text-left">
             <div>
-                <Menu.Button className="0 inline-flex justify-center text-gray-300 dark:text-slate-200">
+                <Menu.Button className="0 inline-flex justify-center text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white">
                     Courses
                     <ChevronDownIcon className="mt-1 mr-1 ml-2 h-5 w-5" aria-hidden="true" />
                 </Menu.Button>
@@ -31,8 +32,8 @@ export default function Dropdown() {
                                 <div className="opacity-100 rounded-md">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <Link className="text-slate-900 hover:text-slate-600 dark:text-slate-200 dark:hover:text-slate-300" to={`/course/${course.course._id}`}>
-                                                <div className='rounded-md p-3 py-3'>
+                                            <Link to={`/course/${course.course._id}`}>
+                                                <div className='text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white rounded-md p-3 py-3'>
                                                     {course.course.courseId} Sec {course.course.sectionId}
                                                 </div>
                                             </Link>
