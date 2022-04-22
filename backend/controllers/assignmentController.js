@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler')
 const Course = require('../models/courseModel')
 const Assignment = require('../models/assignmentModel')
 
-// @description     Create an assignment, 
+// @description     Create an assignment 
 // @route           POST /assignment-api/assignment
 // @access          Public
 const createAssignment = asyncHandler(async (req, res) => {
@@ -57,31 +57,50 @@ const createAssignment = asyncHandler(async (req, res) => {
 
 })
 
-// @description     Get assignments from a course 
-// @route           GET /assignment-api/course/assignments
+// @description     Get assignment from a course 
+// @route           GET /assignment-api/course/:courseId/assignments/:assignmentId
 // @access          Private
-const getAssignmentsFromCourse = asyncHandler(async (req, res) => {
-    const {courseId, courseName, sectionId} = req.body
+const getAssignmentFromCourse = asyncHandler(async (req, res) => {
+    const { courseId, assignmentId } = req.params
 
-    const course = await Course.findOne({courseId: courseId, courseName: courseName, sectionId: sectionId})
+    // check if req.params has values defined
+    if (!courseId || !assignmentId) {
+        res.status(400)
+        throw new Error("Param values are missing")
+    }
 
+    const course = await Course.findById(courseId)
+
+    // Check if course exists 
     if (!course) {
         res.status(400)
-        throw new Error("Invalid Course Data")
+        throw new Error("Course does not exist")
     }
 
-    const assignmentsFromCourse = []
-
-    for (let index = 0; index < course.assignments.length; index++) {
-        assignmentsFromCourse.push(await Assignment.findById(course.assignments[index]))
-    }
-
-    console.log(assignmentsFromCourse)
+    const assignment = await Assignment.findById(assignmentId)
     
-    res.status(200).json(assignmentsFromCourse)
+    // Check if assignment exists
+    if (!assignment) {
+        res.status(400)
+        throw new Error("Assignment does not exist")
+    }
+
+    // check if assignment matches corresponding course data
+    if (
+        assignment.courseId !== course.courseId ||
+        assignment.courseSection !== course.sectionId ||
+        assignment.courseName !== course.courseName
+    ) {
+        res.status(400)
+        throw new Error("Assignment does not belong in the Course")
+    }
+
+    // console.log(assignment)
+   
+    res.status(200).json(assignment)    // return assignment data if matches to course
 })
 
 module.exports = {
     createAssignment,
-    getAssignmentsFromCourse
+    getAssignmentFromCourse
 }

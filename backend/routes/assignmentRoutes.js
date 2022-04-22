@@ -3,11 +3,11 @@ const router = express.Router()
 
 const {
     createAssignment,
-    getAssignmentsFromCourse
+    getAssignmentFromCourse
 } = require('../controllers/assignmentController')
 
 const { protect } = require('../middleware/authMiddleware')
 
 router.post('/assignment', createAssignment)
-router.get('/course/assignments', protect, getAssignmentsFromCourse)
+router.get('/course/:courseId/assignment/:assignmentId', protect, getAssignmentFromCourse)
 module.exports = router

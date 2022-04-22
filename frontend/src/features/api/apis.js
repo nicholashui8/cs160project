@@ -80,17 +80,17 @@ const getCourses = async (token) => {
 /* Course ASSIGNMENT Calls */
 const ASSIGNMENT_API_URL = '/assignment-api/'
 
-// Get assignments from a course
-const getAssignments = async (courseData, token) => {
+// Get assignment from a course
+const getAssignment = async (data, token) => {
     const config = {
         headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
             Authorization: `Bearer ${token}`
         }
     }
-
-    console.log('config ', config)
-
-    const response = await axios.get(ASSIGNMENT_API_URL + 'course/assignments', courseData)
+    
+    const response = await axios.get(ASSIGNMENT_API_URL + `course/${data.courseId}/assignment/${data.assignmentId}`, config)
     return response.data
 }
 
@@ -101,7 +101,7 @@ const apiServices = {
     createCourse,
     getCourse,
     getCourses,
-    getAssignments
+    getAssignment
 }
 
 export default apiServices
