@@ -3,19 +3,18 @@ import apiServices from '../api/apis'
 
 // maybe for course page or the assignment page? might be buggy 
 const initialState = {
-    assignments: [],
+    assignment: null,
     isError: false,
-    isSuccessMulti: false,  // for getting all assignments for home page
-    isSuccessSingle: false, // for getting one assignment for assignment page
+    isSuccess: false, // for getting one assignment for assignment page
     isLoading: false,
     message: ''
 }
 
-export const getAssignments = createAsyncThunk('assignments/getAssignmentsFromCourse', async (courseData, thunkAPI) => {
+export const getAssignment = createAsyncThunk('assignments/getAssignmentFromCourse', async (data, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
         console.log('this is the token ', token)
-        return await apiServices.getAssignments(courseData, token)
+        return await apiServices.getAssignment(data, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
@@ -26,19 +25,24 @@ export const assignmentSlice = createSlice({
     name: 'assignments',
     initialState,
     reducers: {
-        reset: (state) => initialState,
+        reset: (state) => {
+            state.isError = false
+            state.isSuccess = false              
+            state.isLoading = false
+            state.message = ''
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getAssignments.pending, (state) =>{
+            .addCase(getAssignment.pending, (state) =>{
                 state.isLoading = true
             })
-            .addCase(getAssignments.fulfilled, (state, action) => {
+            .addCase(getAssignment.fulfilled, (state, action) => {
                 state.isLoading = false
-                state.isSuccessMulti = true
-                state.assignments = action.payload
+                state.isSuccess = true
+                state.assignment = action.payload
             })
-            .addCase(getAssignments.rejected, (state, action) => {
+            .addCase(getAssignment.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

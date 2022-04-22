@@ -29,8 +29,6 @@ export const createCourse = createAsyncThunk('courses/create', async (courseData
 export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(id, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
-        console.log("getCourse:", token)
-        console.log('courseData:', id)
         return await apiServices.getCourse(id, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -42,7 +40,6 @@ export const getCourse = createAsyncThunk('courses/getCourseFromUser', async(id,
 export const getCourses = createAsyncThunk('courses/getCoursesFromUser', async(_, thunkAPI) => {
     try {
         const token = thunkAPI.getState().auth.user.token
-        console.log(token)
         return await apiServices.getCourses(token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()

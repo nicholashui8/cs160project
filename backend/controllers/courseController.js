@@ -4,12 +4,13 @@ const Assignment = require('../models/assignmentModel')
 const Course = require('../models/courseModel')
 const User = require('../models/userModel')
 
-// @description     Create a course, 
+// @description     Create a course 
 // @route           POST /courses-api/course
 // @access          Private
 const createCourse = asyncHandler(async (req, res) => {
     const {courseId, sectionId, courseName, courseDescription, createdByEmail, createdById} = req.body
 
+    // check if the required fields have values
     if(!courseId || !sectionId || !courseName || !courseDescription || !createdByEmail || !createdById) {
         res.status(400)
         throw new Error("Please add all fields")
@@ -17,6 +18,7 @@ const createCourse = asyncHandler(async (req, res) => {
 
     const userExists = await User.findOne({email: createdByEmail, schoolId: createdById})
 
+    // check if user exists
     if (!userExists) {
         res.status(400)
         throw new Error("User does not exist")
@@ -24,6 +26,7 @@ const createCourse = asyncHandler(async (req, res) => {
 
     const courseExists = await Course.findOne({courseId: courseId, sectionId: sectionId, courseName: courseName})
 
+    // check if the course already exists
     if(courseExists) {
         res.status(400)
         throw new Error("Course already exists")
@@ -43,7 +46,7 @@ const createCourse = asyncHandler(async (req, res) => {
         throw new Error('Invalid course data')
     }
 
-    // req.user.id
+    // update the user.courses
     await User.findOneAndUpdate({schoolId: createdById, email: createdByEmail}, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
         if (err) {
             return res.status(400).json({success: false, error: err})
@@ -65,14 +68,21 @@ const createCourse = asyncHandler(async (req, res) => {
 const getCourseFromUser = asyncHandler(async (req, res) => {
     const { id } = req.params
     
+    // check if req.params has values defined
     if (!id) {
         res.status(400)
-        throw new Error("No course id exists")
+        throw new Error("Param value does not exist")
     }
 
     const course = await Course.findById(id)
-    const assignments = []
 
+    // check if course exists
+    if (!course) {
+        res.status(400)
+        throw new Error('Course does not exist')
+    }
+
+    const assignments = []
     for (let index = 0; index < course.assignments.length; index++) {
         assignments.push(await Assignment.findById(course.assignments[index]))
     }
@@ -80,7 +90,6 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
     const courseInfo = {course, assignments}
     
     //console.log(courseInfo)
-
     res.status(200).json(courseInfo)
 })
 
@@ -91,7 +100,6 @@ const getCoursesFromUser = asyncHandler(async (req, res) => {
     const user = req.user
     
     const courses = []
-
     for (let index = 0; index < user.courses.length; index++) {
         const course = await(Course.findById(user.courses[index]))
         // console.log(index, course)
@@ -102,9 +110,6 @@ const getCoursesFromUser = asyncHandler(async (req, res) => {
         }
 
         courses.push({course, assignments})
-
-        //console.log(courses[index].course)
-        //console.log(courses[index].assignments)
     }
 
     res.status(200).json(courses)
