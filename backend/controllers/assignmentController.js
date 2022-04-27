@@ -7,9 +7,9 @@ const Assignment = require('../models/assignmentModel')
 // @route           POST /assignment-api/assignment
 // @access          Public
 const createAssignment = asyncHandler(async (req, res) => {
-    const {assignmentId, assignmentName, courseId, courseName, courseSection, dueDate} = req.body
+    const {assignmentId, assignmentName, assignmentDescription, courseId, courseName, courseSection, dueDate, totalPointsPossible} = req.body
 
-    if (!assignmentId || !assignmentName || !courseId || !courseName || !courseSection || !dueDate) {
+    if (!assignmentId || !assignmentName || !assignmentDescription || !courseId || !courseName || !courseSection || !dueDate || !totalPointsPossible) {
         res.status(400)
         throw new Error("Please add all fields")
     }
@@ -31,10 +31,12 @@ const createAssignment = asyncHandler(async (req, res) => {
     const assignment = await Assignment.create({
         assignmentId,
         assignmentName,
+        assignmentDescription,
         courseId,
         courseName,
         courseSection,
-        dueDate
+        dueDate,
+        totalPointsPossible
     })
 
     if (!assignment) {

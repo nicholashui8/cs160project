@@ -9,7 +9,6 @@ import { toast } from 'react-toastify'
 function Course(){
 
     const params = useParams()
-    //const id = params.id
     
     const navigate = useNavigate()
     const dispatch = useDispatch()
