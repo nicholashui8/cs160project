@@ -10,16 +10,18 @@ const User = require('../models/userModel')
 // @route           POST /courses-api/course
 // @access          Private
 const createCourse = asyncHandler(async (req, res) => {
-    const {courseId, sectionId, courseName, courseDescription, createdByEmail, createdById} = req.body
+    const user = req.user
+
+    const {courseId, sectionId, courseName, courseDescription, courseRoom, courseDates, startTime, endTime} = req.body
     const url = req.protocol + '://' + req.get('host')
 
     // check if the required fields have values
-    if(!courseId || !sectionId || !courseName || !courseDescription || !createdByEmail || !createdById) {
+    if(!courseId || !sectionId || !courseName || !courseDescription || !courseRoom || !courseDates || !startTime || !endTime) {
         res.status(400)
         throw new Error("Please add all fields")
     }
 
-    const userExists = await User.findOne({email: createdByEmail, schoolId: createdById})
+    const userExists = await User.findOne({email: user.email, schoolId: user.schoolId})
 
     // check if user exists
     if (!userExists) {
@@ -40,8 +42,13 @@ const createCourse = asyncHandler(async (req, res) => {
         sectionId,
         courseName,
         courseDescription,
-        createdByEmail,     
-        createdById,
+        courseRoom,
+        courseDates,
+        startTime,
+        endTime,
+        instructorName: user.name,
+        createdByEmail: user.email,     
+        createdById: user.schoolId,
         syllabus: url + '/public/' + req.file.filename
     })
 
@@ -51,7 +58,7 @@ const createCourse = asyncHandler(async (req, res) => {
     }
 
     // update the user.courses
-    await User.findOneAndUpdate({schoolId: createdById, email: createdByEmail}, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
+    await User.findOneAndUpdate({schoolId: user.schoolId, email: user.email}, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
         if (err) {
             return res.status(400).json({success: false, error: err})
         }
@@ -97,7 +104,7 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
 
         let assignmentGrade = null
         let submissionPoints = null
-
+        let isSubmitted = false
         for (let sub_index = 0; sub_index < assignment.submissions.length; sub_index++) {
             const submission = await Submission.findById(assignment.submissions[sub_index])
             
@@ -108,11 +115,12 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
                     pointsRecieved += submission.pointsRecieved
                     assignmentGrade = submission.pointsRecieved
                     submissionPoints = submission.pointsRecieved
+                    isSubmitted = true
                 }
             }
         }
 
-        const data = {assignment, submissionPoints, assignmentGrade: +((assignmentGrade/assignment.totalPointsPossible) * 100).toFixed(2)}
+        const data = {assignment, isSubmitted, submissionPoints, assignmentGrade: +((assignmentGrade/assignment.totalPointsPossible) * 100).toFixed(2)}
         assignments.push(data)
     }
     

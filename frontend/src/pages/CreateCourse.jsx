@@ -7,18 +7,15 @@ import Navbar from '../components/Navbar'
 import Spinner from '../components/Spinner'
 
 function CreateCourse() {
-
-  const [formData, setFormData] = useState({
-    courseId: '',
-    courseName: '',
-    sectionId: '',
-    courseDescription: '',
-    createdByEmail: '',
-    createdById: '',
-    file: null
-  })
-
-  const { courseId, courseName, sectionId, courseDescription, createdByEmail, createdById} = formData
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [courseId, setCourseId] = useState('')
+  const [courseName, setCourseName] = useState('')
+  const [sectionId, setSectionId] = useState('')
+  const [courseRoom, setCourseRoom] = useState('')
+  const [courseDates, setCourseDates] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [courseDescription, setCourseDescription] = useState('')
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -50,31 +47,23 @@ function CreateCourse() {
     }
   }, [user, isError, isSuccessCourseCreated, message, dispatch, navigate])
 
-  const onChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value
-    }))
-  }
-
   const handleFileUpload = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.files[0]
-    }))
+    setSelectedFile(e.target.files[0])
   }
 
   const onSubmit = (e) => {
     e.preventDefault()
 
-    const courseData = {
-      courseId,
-      courseName,
-      sectionId,
-      courseDescription,
-      createdByEmail,
-      createdById
-    }
+    const courseData = new FormData()
+    courseData.append('courseId', courseId)
+    courseData.append('courseName', courseName)
+    courseData.append('sectionId', sectionId)
+    courseData.append('courseRoom', courseRoom)
+    courseData.append('courseDates', courseDates)
+    courseData.append('startTime', startTime)
+    courseData.append('endTime', endTime)
+    courseData.append('courseDescription', courseDescription)
+    courseData.append('syllabus', selectedFile)
 
     dispatch(createCourse(courseData))
   }
@@ -88,9 +77,9 @@ function CreateCourse() {
       <Navbar />
       <div className='flex justify-center bg-gray-200 dark:bg-gray-700 h-screen overflow-scroll'>
         <section className="max-w-screen-4xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
-            <h1 className="text-3xl font-bold text-white capitalize dark:text-white">Create new Course</h1>
+            <h1 className="text-3xl font-bold text-white text-center capitalize dark:text-white">Create new Course</h1>
               <form onSubmit={onSubmit}>
-                <div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-4">
                   <div>
                     <label className="text-white dark:text-gray-200" for="courseId">Course ID</label>
                     <input 
@@ -98,8 +87,8 @@ function CreateCourse() {
                       type="text"
                       name="courseId"
                       value={courseId}
-                      placeholder="Ex) CS160"
-                      onChange={onChange}
+                      placeholder="CS160"
+                      onChange={(e) => setCourseId(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     />
                   </div>
@@ -110,8 +99,8 @@ function CreateCourse() {
                       type="text" 
                       name="courseName"
                       value={courseName}
-                      placeholder="Ex) Software Engineering"
-                      onChange={onChange}
+                      placeholder="Software Engineering"
+                      onChange={(e) => setCourseName(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     />
                   </div>
@@ -122,35 +111,65 @@ function CreateCourse() {
                       type="text" 
                       name="sectionId"
                       value={sectionId}
-                      placeholder="Ex) 9"
-                      onChange={onChange}
+                      placeholder="9"
+                      onChange={(e) => setSectionId(e.target.value)}
+                      className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                      />
+                  </div>
+                  <div>
+                    <label className="text-white dark:text-gray-200" for="courseRoom">Course Room</label>
+                    <input 
+                      id="courseRoom" 
+                      type="text" 
+                      name="courseRoom"
+                      value={courseRoom}
+                      placeholder="MacQuarrie Hall 222"
+                      onChange={(e) => setCourseRoom(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                       />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-3">
                   <div>
-                    <label className="text-white dark:text-gray-200" for="createdByEmail">Confirm Email</label>
+                    <label className="text-white dark:text-gray-200" for="courseDates">Select Course Days</label>
+                    <select 
+                      id="courseDates" 
+                      name="courseDates"
+                      value={courseDates}
+                      onChange={(e) => setCourseDates(e.target.value)}
+                      className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                    >
+                      <option value="M">M</option>
+                      <option value="M/W">M/W</option>
+                      <option value="M/W/F">M/W/F</option>
+                      <option value="T">T</option>
+                      <option value="T/Th">T/Th</option>
+                      <option value="T/Th/F">T/Th/F</option>
+                      <option value="W">W</option>
+                      <option value="Th">Th</option>
+                      <option value="F">F</option>
+                    </select>  
+                  </div>
+                  <div>
+                    <label className="text-white dark:text-gray-200" for="startTime">Start Time</label>
                     <input 
-                      id="createdByEmail" 
-                      type="email" 
-                      name="createdByEmail"
-                      value={createdByEmail}
-                      placeholder="Enter your email"
-                      onChange={onChange}
+                      id="startTime" 
+                      type="time" 
+                      name="startTime"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     />
                   </div>
                   <div>
-                    <label className="text-white dark:text-gray-200" for="createdById">Confirm School ID</label>
+                    <label className="text-white dark:text-gray-200" for="endTime">End Time</label>
                     <input 
-                      id="createdById" 
-                      type="text" 
-                      name="createdById"
-                      value={createdById}
-                      placeholder="Enter your school id"
-                      onChange={onChange}
+                      id="endTime" 
+                      type="time" 
+                      name="endTime"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     />
                   </div>
@@ -165,13 +184,20 @@ function CreateCourse() {
                       name="courseDescription"
                       value={courseDescription}
                       placeholder="Enter a description of the course"
-                      onChange={onChange}
+                      onChange={(e) => setCourseDescription(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
                     </textarea>
                   </div>
-
-
-
+                  <div>
+                    <label className="text-white dark:text-gray-200" for="selectedFile">Syllabus</label>
+                    <input 
+                      className="block w-full px-4 py-2 text-base font-normal text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 bg-clip-padding border border-solid border-gray-300 dark:border-gray-600 rounded focus:text-gray-700 focus:bg-white focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none" 
+                      type="file" 
+                      id="selectedFile"
+                      name="selectedFile"
+                      onChange={handleFileUpload}
+                    />
+                  </div>
                 </div>  
                 
                 <div className="flex justify-center mt-6">
