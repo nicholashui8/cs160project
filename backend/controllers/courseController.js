@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler')
+const fs = require('fs')
 
 const Assignment = require('../models/assignmentModel')
 const Course = require('../models/courseModel')
@@ -10,6 +11,7 @@ const User = require('../models/userModel')
 // @access          Private
 const createCourse = asyncHandler(async (req, res) => {
     const {courseId, sectionId, courseName, courseDescription, createdByEmail, createdById} = req.body
+    const url = req.protocol + '://' + req.get('host')
 
     // check if the required fields have values
     if(!courseId || !sectionId || !courseName || !courseDescription || !createdByEmail || !createdById) {
@@ -39,7 +41,8 @@ const createCourse = asyncHandler(async (req, res) => {
         courseName,
         courseDescription,
         createdByEmail,     
-        createdById         
+        createdById,
+        syllabus: url + '/public/' + req.file.filename
     })
 
     if (!course) {

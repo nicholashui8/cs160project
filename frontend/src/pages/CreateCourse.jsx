@@ -14,7 +14,8 @@ function CreateCourse() {
     sectionId: '',
     courseDescription: '',
     createdByEmail: '',
-    createdById: ''
+    createdById: '',
+    file: null
   })
 
   const { courseId, courseName, sectionId, courseDescription, createdByEmail, createdById} = formData
@@ -53,6 +54,13 @@ function CreateCourse() {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value
+    }))
+  }
+
+  const handleFileUpload = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.files[0]
     }))
   }
 
@@ -161,6 +169,9 @@ function CreateCourse() {
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
                     </textarea>
                   </div>
+
+
+
                 </div>  
                 
                 <div className="flex justify-center mt-6">
