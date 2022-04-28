@@ -1,8 +1,10 @@
 import { errorHandler } from './middleware/errorMiddleware'
 
-const express = require('express')
-const dotenv = require('dotenv').config()
 const connectDB = require('./config/connectDB')
+const dotenv = require('dotenv').config()
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
 const port = process.env.PORT || 9000
 
 connectDB()
@@ -11,6 +13,8 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+
+app.use('/public', express.static('public'))
 
 app.use('/user-api', require('./routes/userRoutes'))                // enables backend api calls involving user
 app.use('/course-api', require('./routes/courseRoutes'))            // enables backend api calls for courses

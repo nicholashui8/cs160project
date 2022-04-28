@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 function Course(){
 
     const params = useParams()
-    //const id = params.id
+
     console.log(params.id)
 
     const navigate = useNavigate()
@@ -68,13 +68,13 @@ function Course(){
                         {singleCourse.course.courseDescription}
                     </div>
                     <div className="ml-10 mt-6">
-                        Class time: T/TH 12:00 - 13:15
+                        {`Class time: ${singleCourse.course.courseDates} ${singleCourse.course.startTime} - ${singleCourse.course.endTime}`}
                     </div>
                     <div className="ml-10 mt-6">
-                        Location: Room 210
+                        {`Location: ${singleCourse.course.courseRoom}`}
                     </div>
                     <div className="ml-10 mt-6">
-                        Instructor: Yan Chen
+                        {`Instructor: ${singleCourse.course.instructorName}`}
                     </div>
                 </div>
                 
@@ -96,7 +96,7 @@ function Course(){
                                 <>
                                 <div className="col-span-2 hover:text-slate-600"><Link className="dark:text-slate-50" to="/assignment">{assignment.assignment.assignmentName}</Link></div>
                                 <div className="">{assignment.assignment.dueDate}</div>
-                                <div className="">No</div>
+                                <div className="">{assignment.isSubmitted ? 'Yes' : 'No'} </div>
                                 </>
                             )
                         })
@@ -111,7 +111,7 @@ function Course(){
                         Total: 
                     </div>
                     <div className="text-2xl flex-none ml-2 mr-10 pt-2">
-                        {singleCourse.grade}%
+                        {singleCourse.grade ? `${singleCourse.grade}%` : 'N/A'}
                     </div>
                 </div>
                 <div className="grid grid-cols-5 mt-5 pl-10 pr-10 font-semibold">
@@ -129,9 +129,9 @@ function Course(){
                                 <>
                                 {/* to={`/course/${params.id}/assignments/${assignment.assignment.id}`} */}
                                 <div className="col-span-2"><Link className="dark:text-slate-50" to={`/course/${params.id}/assignments/${assignment.assignment._id}`} >{assignment.assignment.assignmentName}</Link></div>
-                                <div className="col-span-1">{assignment.submissionPoints}</div>
+                                <div className="col-span-1">{assignment.isSubmitted ? `${assignment.submissionPoints}` : 'N/A'}</div>
                                 <div className="col-span-1">{assignment.assignment.totalPointsPossible}</div>
-                                <div className="col-span-1">{assignment.assignmentGrade}%</div>
+                                <div className="col-span-1">{assignment.isSubmitted ? `${assignment.assignmentGrade}%` : 'Not Yet Graded'}</div>
                                 </>
                             )
                         })
