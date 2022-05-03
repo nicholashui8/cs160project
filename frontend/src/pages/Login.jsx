@@ -1,10 +1,11 @@
+import Spinner from '../components/Spinner'
+
 import { useState, useEffect } from 'react'
-import { LockClosedIcon } from '@heroicons/react/solid'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { login, reset} from '../features/service/authSlice'
-import Spinner from '../components/Spinner'
+import { LockClosedIcon } from '@heroicons/react/solid'
 
 function Login() {
     const [formData, setFormData] = useState({

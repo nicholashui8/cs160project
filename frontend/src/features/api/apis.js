@@ -45,7 +45,7 @@ const createCourse = async (courseData, token) => {
         }
     }
 
-    const response = await axios.post(COURSE_API_URL + '/course', courseData, config)
+    const response = await axios.post(COURSE_API_URL + 'course', courseData, config)
     return response.data
 }
 
@@ -77,7 +77,42 @@ const getCourses = async (token) => {
     return response.data
 }
 
-/* Course ASSIGNMENT Calls */
+const getCoursesNotEnrolled = async (token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.get(COURSE_API_URL + 'user/courses-not-enrolled', config)
+    return response.data
+}
+
+const addCoursesToUser = async (data, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.put(COURSE_API_URL + 'user/courses-enroll', data, config)
+    return response.data
+}
+
+const dropCoursesFromUser = async (data, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.put(COURSE_API_URL + 'user/courses-drop', data, config)
+    return response.data
+}
+
+/* Assignment API Calls */
 const ASSIGNMENT_API_URL = '/assignment-api/'
 
 // Get assignment from a course
@@ -94,6 +129,21 @@ const getAssignment = async (data, token) => {
     return response.data
 }
 
+/* Submission API Calls */
+const SUBMISSION_API_URL = '/submission-api/'
+
+// create a submission for an assignment
+const createSubmission = async (submissionData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.post(SUBMISSION_API_URL + 'submission', submissionData, config)
+    return response.data
+}
+
 const apiServices = {
     register,
     login,
@@ -101,7 +151,11 @@ const apiServices = {
     createCourse,
     getCourse,
     getCourses,
-    getAssignment
+    getCoursesNotEnrolled,
+    addCoursesToUser,
+    dropCoursesFromUser,
+    getAssignment,
+    createSubmission
 }
 
 export default apiServices

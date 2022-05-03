@@ -1,10 +1,11 @@
+import Spinner from '../components/Spinner'
+
 import {useState, useEffect} from 'react'
-import { AcademicCapIcon } from '@heroicons/react/solid'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { register, reset} from '../features/service/authSlice'
-import Spinner from '../components/Spinner'
+import { AcademicCapIcon } from '@heroicons/react/solid'
 
 function Register() {
     const [formData, setFormData] = useState({

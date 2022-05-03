@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { getCourses, createCourse, reset } from '../features/service/courseSlice'
-import { toast } from 'react-toastify'
 import Navbar from '../components/Navbar'
 import Spinner from '../components/Spinner'
+
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { createCourse, reset } from '../features/service/courseSlice'
 
 function CreateCourse() {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -21,7 +22,7 @@ function CreateCourse() {
   const dispatch = useDispatch()
 
   const { user } = useSelector((state) => state.auth)
-  const { courses, isLoading, isSuccessCourseCreated, isError, message } = useSelector((state) => state.courses)
+  const { isLoading, isSuccessCourseCreated, isError, message } = useSelector((state) => state.courses)
 
   useEffect(() => {
     if (isError) {
@@ -39,13 +40,11 @@ function CreateCourse() {
     if (isSuccessCourseCreated) {
       navigate('/home')
     }
-    
-    dispatch(getCourses())
 
     return () => {
       dispatch(reset())
     }
-  }, [user, isError, isSuccessCourseCreated, message, dispatch, navigate])
+  }, [user, isError, message, dispatch, navigate])
 
   const handleFileUpload = (e) => {
     setSelectedFile(e.target.files[0])
@@ -53,24 +52,46 @@ function CreateCourse() {
 
   const onSubmit = (e) => {
     e.preventDefault()
+    
+    if (!selectedFile) {
+      toast.error('Please upload the syllabus file for the course')
+    } else if (selectedFile.type !== 'application/pdf') {
+      toast.error('Please upload only PDF files')
+    } else {
+      if (!courseId || !courseName || !sectionId || !courseRoom || !courseDates || !startTime || !endTime || !courseDescription) {
+        setSelectedFile(null)
+      }
+      // Reformat start time to AM/PM
+      const startH = +startTime.substring(0, 2)
+      const newStartH = startH % 12 || 12
+      const startAP = (startH < 12 || startH === 24) ? "AM" : "PM"
+      const newStartTime = newStartH + startTime.substring(2) + startAP
 
-    const courseData = new FormData()
-    courseData.append('courseId', courseId)
-    courseData.append('courseName', courseName)
-    courseData.append('sectionId', sectionId)
-    courseData.append('courseRoom', courseRoom)
-    courseData.append('courseDates', courseDates)
-    courseData.append('startTime', startTime)
-    courseData.append('endTime', endTime)
-    courseData.append('courseDescription', courseDescription)
-    courseData.append('syllabus', selectedFile)
+      // Reformat end time to AM/PM
+      const endH = +endTime.substring(0, 2)
+      const newEndH = endH % 12 || 12
+      const endAP = (endH < 12 || endH === 24) ? "AM" : "PM"
+      const newEndTime = newEndH + endTime.substring(2) + endAP
 
-    dispatch(createCourse(courseData))
+      // create courseData for createCourse
+      const courseData = new FormData()
+      courseData.append('courseId', courseId)
+      courseData.append('courseName', courseName)
+      courseData.append('sectionId', sectionId)
+      courseData.append('courseRoom', courseRoom)
+      courseData.append('courseDates', courseDates)
+      courseData.append('startTime', newStartTime)
+      courseData.append('endTime', newEndTime)
+      courseData.append('courseDescription', courseDescription)
+      courseData.append('syllabus', selectedFile)
+      
+      dispatch(createCourse(courseData))
+    }
   }
 
   if (isLoading) {
     return <Spinner />
-}
+  }
 
   return (
     <div>
@@ -140,6 +161,7 @@ function CreateCourse() {
                       onChange={(e) => setCourseDates(e.target.value)}
                       className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     >
+                      <option value="" disabled hidden>Choose course dates</option>
                       <option value="M">M</option>
                       <option value="M/W">M/W</option>
                       <option value="M/W/F">M/W/F</option>
@@ -211,134 +233,3 @@ function CreateCourse() {
 }
 
 export default CreateCourse
-
-/*
-<div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-1">
-                  <div>
-                    <label className="text-white dark:text-gray-200" for="courseDescription">Course Description</label>
-                    <textarea 
-                      id="courseDescription" 
-                      type="textarea" 
-                      className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-                    </textarea>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-white">Syllabus</label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                      <div class="space-y-1 text-center">
-                        <svg class="mx-auto h-12 w-12 text-white" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <div class="flex text-sm text-gray-600">
-                          <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                            <span class="">Upload a file</span>
-                            <input id="file-upload" name="file-upload" type="file" class="sr-only">
-                          </label>
-                          <p class="pl-1 text-white">or drag and drop</p>
-                        </div>
-                        <p class="text-xs text-white">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>  
-
-*/
-
-/*
-<div class='flex justify-center bg-gray-700 h-screen'>
-
-  <section class="max-w-screen-4xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
-      <h1 class="text-3xl font-bold text-white capitalize dark:text-white">Create new Course</h1>
-      <form>
-          <div class="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-3">
-              <div>
-                  <label class="text-white dark:text-gray-200" for="username">Course ID</label>
-                  <input id="username" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-
-              <div>
-                  <label class="text-white dark:text-gray-200" for="emailAddress">Course Name</label>
-                  <input id="emailAddress" type="email" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-
-              <div>
-                  <label class="text-white dark:text-gray-200" for="password">Section ID</label>
-                  <input id="password" type="password" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Password Confirmation</label>
-                  <input id="passwordConfirmation" type="password" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Color</label>
-                  <input id="color" type="color" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Select</label>
-                  <select class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-                      <option>Surabaya</option>
-                      <option>Jakarta</option>
-                      <option>Tangerang</option>
-                      <option>Bandung</option>
-                  </select>
-              </div>
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Range</label>
-                  <input id="range" type="range" class="block w-full py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Date</label>
-                  <input id="date" type="date" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-              <div>
-                  <label class="text-white dark:text-gray-200" for="passwordConfirmation">Text Area</label>
-                  <textarea id="textarea" type="textarea" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></textarea>
-              </div>
-              <div>
-                  <label class="block text-sm font-medium text-white">
-                  Image
-                </label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                  <div class="space-y-1 text-center">
-                    <svg class="mx-auto h-12 w-12 text-white" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    <div class="flex text-sm text-gray-600">
-                      <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                        <span class="">Upload a file</span>
-                        <input id="file-upload" name="file-upload" type="file" class="sr-only">
-                      </label>
-                      <p class="pl-1 text-white">or drag and drop</p>
-                    </div>
-                    <p class="text-xs text-white">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
-                </div>
-              </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-2">
-            <div>
-                  <label class="text-white dark:text-gray-200" for="username">Confirm email</label>
-                  <input id="username" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-
-              <div>
-                  <label class="text-white dark:text-gray-200" for="emailAddress">Confirm school ID</label>
-                  <input id="emailAddress" type="email" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-              </div>
-            
-          </div>
-
-           <div class="flex justify-end mt-6">
-              <button class="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-pink-500 rounded-md hover:bg-pink-700 focus:outline-none focus:bg-gray-600">Save</button>
-          </div>
-      </form>
-  </section>
-</div>
-
-*/

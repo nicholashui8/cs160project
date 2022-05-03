@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default function Coursegrid({ data }) {
     const courseId = data.course._id
-    console.log(data.grade)
+    //console.log(data.grade)
     return (
         <div className="bg-gray-300 dark:bg-gray-600 container-sm h-64 w-128 my-4 mx-4 rounded-lg shadow-xl">
             <div className='flex border-b border-gray-800/50'>
@@ -18,7 +18,7 @@ export default function Coursegrid({ data }) {
                 data.assignments.map((assignment) => {
                     //console.log(assignment)
                     const assignmentData = {assignment, courseId}
-                    return <AssignmentCourseGrid data={assignmentData} />
+                    return <AssignmentCourseGrid key={`assignment-grid-${assignment._id}`} data={assignmentData} />
             })}
         </div>
     )
