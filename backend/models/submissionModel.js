@@ -6,16 +6,29 @@ const submissionSchema = mongoose.Schema({
         min: 0,
         required: false
     },
-    assignmentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Assignment'
+
+    courseId: {
+        type: String,
+        required: true
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    }
+
+    assignmentId: {
+        type: String,
+        required: true
+    },
+
+    userEmail: {
+        type: String,
+        required: true
+    },
+
+    submissionFile: {         // should store syllabus filename
+        type: String,
+        required: true
+    },
+},
+{
+    timestamps:true
 })
 
 module.exports = mongoose.model('Submission', submissionSchema)

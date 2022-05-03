@@ -1,7 +1,9 @@
 const asyncHandler = require('express-async-handler')
 
-const Course = require('../models/courseModel')
 const Assignment = require('../models/assignmentModel')
+const Course = require('../models/courseModel')
+const Submission = require('../models/submissionModel')
+const User = require('../models/userModel')
 
 // @description     Create an assignment 
 // @route           POST /assignment-api/assignment
@@ -63,6 +65,7 @@ const createAssignment = asyncHandler(async (req, res) => {
 // @route           GET /assignment-api/course/:courseId/assignments/:assignmentId
 // @access          Private
 const getAssignmentFromCourse = asyncHandler(async (req, res) => {
+    const user = req.user
     const { courseId, assignmentId } = req.params
 
     // check if req.params has values defined
@@ -80,7 +83,8 @@ const getAssignmentFromCourse = asyncHandler(async (req, res) => {
     }
 
     const assignment = await Assignment.findById(assignmentId)
-    
+    let isSubmitted = false
+
     // Check if assignment exists
     if (!assignment) {
         res.status(400)
@@ -97,9 +101,18 @@ const getAssignmentFromCourse = asyncHandler(async (req, res) => {
         throw new Error("Assignment does not belong in the Course")
     }
 
+    for (let index = 0; index < assignment.submissions.length; index++) {
+        const submission = await Submission.findById(assignment.submissions[index])
+        
+        if (submission.userEmail === user.email) {
+            isSubmitted = true
+        }
+
+    }
+
     // console.log(assignment)
    
-    res.status(200).json(assignment)    // return assignment data if matches to course
+    res.status(200).json({assignment, isSubmitted})    // return assignment data if matches to course
 })
 
 module.exports = {

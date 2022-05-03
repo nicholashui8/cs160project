@@ -2,12 +2,15 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import apiServices from '../api/apis'
 
 const initialState = {
-    courses: [],
-    singleCourse: null,
+    courses: [],                    // for getting all courses and additional data from user; Home page
+    singleCourse: null,             // for getting a course from user; Course page
+    notEnrolledIn: [],              // for getting courses not enrolled in
     isError: false,
     isSuccess: false,               // for getting all courses from user; Home page
     isSuccessSingle: false,         // for getting a course from user;    Course page
     isSuccessCourseCreated: false,  // for creaing a course;              Create Course page
+    isSuccessAddingCourses: false,  // for adding course(s) to a user;    Enroll Course page
+    isSuccessRemovingCourses: false,// for removing course(s) from a user;Drop Course page
     isLoading: false,
     message: ''
 }
@@ -47,6 +50,37 @@ export const getCourses = createAsyncThunk('courses/getCoursesFromUser', async(_
     }
 })
 
+// Get courses in which the user is not enrolled in
+export const getCoursesNotEnrolled = createAsyncThunk('courses/getCoursesNotEnrolledIn', async(_, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await apiServices.getCoursesNotEnrolled(token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+export const addCoursesToUser = createAsyncThunk('courses/addCoursesToUser', async(data, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await apiServices.addCoursesToUser(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+export const removeCoursesFromUser = createAsyncThunk('courses/removeCoursesFromUser', async(data, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await apiServices.dropCoursesFromUser(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 export const courseSlice = createSlice({
     name: 'courses',
     initialState,
@@ -56,6 +90,8 @@ export const courseSlice = createSlice({
             state.isSuccess = false               // for getting all courses from user; Home page
             state.isSuccessSingle = false         // for getting a course from user;    Course page
             state.isSuccessCourseCreated = false  // for creaing a course;              Create Course page
+            state.isSuccessAddingCourses = false
+            state.isSuccessRemovingCourses = false
             state.isLoading = false
             state.message = ''
         },
@@ -97,6 +133,43 @@ export const courseSlice = createSlice({
                 state.courses = action.payload
             })
             .addCase(getCourses.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(getCoursesNotEnrolled.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(getCoursesNotEnrolled.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccess = true
+                state.notEnrolledIn = action.payload
+            })
+            .addCase(getCoursesNotEnrolled.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(addCoursesToUser.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(addCoursesToUser.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccessAddingCourses = true
+            })
+            .addCase(addCoursesToUser.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(removeCoursesFromUser.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(removeCoursesFromUser.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccessRemovingCourses = true
+            })
+            .addCase(removeCoursesFromUser.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

@@ -1,8 +1,10 @@
 const asyncHandler = require('express-async-handler')
 const fs = require('fs')
+const path = require('path')
 
 const Assignment = require('../models/assignmentModel')
 const Course = require('../models/courseModel')
+const ObjectId = require('mongoose').Types.ObjectId;
 const Submission = require('../models/submissionModel')
 const User = require('../models/userModel')
 
@@ -13,7 +15,7 @@ const createCourse = asyncHandler(async (req, res) => {
     const user = req.user
 
     const {courseId, sectionId, courseName, courseDescription, courseRoom, courseDates, startTime, endTime} = req.body
-    const url = req.protocol + '://' + req.get('host')
+    const url = `${req.protocol}://localhost:3000`
 
     // check if the required fields have values
     if(!courseId || !sectionId || !courseName || !courseDescription || !courseRoom || !courseDates || !startTime || !endTime) {
@@ -49,7 +51,7 @@ const createCourse = asyncHandler(async (req, res) => {
         instructorName: user.name,
         createdByEmail: user.email,     
         createdById: user.schoolId,
-        syllabus: url + '/public/' + req.file.filename
+        syllabus: `${url}/files/${req.file.filename}` //'/backend/public/' + req.file.filename    //url + '/public/' + req.file.filename
     })
 
     if (!course) {
@@ -58,19 +60,9 @@ const createCourse = asyncHandler(async (req, res) => {
     }
 
     // update the user.courses
-    await User.findOneAndUpdate({schoolId: user.schoolId, email: user.email}, {$push: {"courses": course}}, {safe: true, upsert: true, new: true}, (err, user) => {
-        if (err) {
-            return res.status(400).json({success: false, error: err})
-        }
+    await User.findOneAndUpdate({schoolId: user.schoolId, email: user.email}, {$push: {"courses": course}})
 
-        if (!user) {
-            res.status(400)
-            throw new Error('User not found')
-        }
-
-        return res.status(200).json({success:true, data: user})
-    }).catch(err => console.log(err))
-
+    res.status(200).json({success:true, data: user})
 })
 
 // @description     Get a course from a user, for the course page
@@ -95,6 +87,8 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
         throw new Error('Course does not exist')
     }
 
+    //const syllabusPath = path.join(__dirname, `../../${course.syllabus}`)
+
     let totalPoints = 0
     let pointsRecieved = 0
 
@@ -108,15 +102,14 @@ const getCourseFromUser = asyncHandler(async (req, res) => {
         for (let sub_index = 0; sub_index < assignment.submissions.length; sub_index++) {
             const submission = await Submission.findById(assignment.submissions[sub_index])
             
-            const submission_user = await User.findById(submission.userId)
-            if (submission_user.email === user.email) {
+            if (submission.userEmail === user.email) {
                 if (submission.pointsRecieved) {
                     totalPoints += assignment.totalPointsPossible
                     pointsRecieved += submission.pointsRecieved
                     assignmentGrade = submission.pointsRecieved
                     submissionPoints = submission.pointsRecieved
-                    isSubmitted = true
                 }
+                isSubmitted = true
             }
         }
 
@@ -151,9 +144,7 @@ const getCoursesFromUser = asyncHandler(async (req, res) => {
             for (let submission_index = 0; submission_index < assignment.submissions.length; submission_index++) {
                 const submission = await Submission.findById(assignment.submissions[submission_index])
 
-                const submission_user = await User.findById(submission.userId)
-
-                if (submission_user.email === user.email) {
+                if (submission.userEmail === user.email) {
                     if (submission.pointsRecieved) {
                         totalPoints += assignment.totalPointsPossible
                         pointsRecieved += submission.pointsRecieved
@@ -169,14 +160,66 @@ const getCoursesFromUser = asyncHandler(async (req, res) => {
     res.status(200).json(courses)
 })
 
+// @description     Get courses that the user is not enrolled in
+// @route           GET /course-api/user/courses-not-enrolled
+// @access          Private
+const getCoursesNotEnrolledIn = asyncHandler(async (req, res) => {
+    const user = req.user
 
-// worry about this later
-const addCourseToUser = asyncHandler(async (req, res) => {
-    
+    const courses = await Course.find()
+    // const coursesNotEnrolled = []
+
+    for (let index = 0; index < courses.length; index++) {
+        if (user.courses.includes(courses[index]._id)) {
+            courses.splice(index, 1)
+            index--
+        }
+    }
+    // console.log(courses.length)
+    res.status(200).json(courses)
+})
+
+// @description     Enroll user in course(s)
+// @route           PUT /course-api/user/courses-enroll
+// @access          Private
+const addCoursesToUser = asyncHandler(async (req, res) => {
+    const body = req.body
+    // console.log(body)
+    const user = req.user
+
+    for (let key in body) {
+        if(body[key] !== '') {
+            const course = await Course.findById(body[key])
+
+            await User.findByIdAndUpdate(user._id, {$push: {"courses": course}}, {safe: true, upsert: true, new: true})
+        }
+    }
+
+    res.status(200).json({success:true, data:user})
+})
+
+// @description     Drop course(s) from user
+// @route           PUT /course-api/user/courses-drop
+// @access          Private
+const dropCoursesFromUser = asyncHandler(async (req, res) => {
+    const body = req.body
+    // console.log(body)
+    const user = req.user
+
+    for (let key in body) {
+        if(body[key] !== '') {
+            await User.findByIdAndUpdate(user._id, {$pull: {"courses": new ObjectId(body[key])}}, {safe: true, upsert: true, new: true})
+        }
+    }
+
+    res.status(200).json({success:true, data:user})
 })
 
 module.exports = {
+    addCoursesToUser,
     createCourse,
+    dropCoursesFromUser,
     getCourseFromUser,
-    getCoursesFromUser
+    getCoursesFromUser,
+    getCoursesNotEnrolledIn
 }

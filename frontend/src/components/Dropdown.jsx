@@ -29,7 +29,7 @@ export default function Dropdown() {
                     {
                         courses.map((course) => {
                             return (
-                                <div className="opacity-100 rounded-md">
+                                <div key={`course-dropdown-${course.course._id}`} className="opacity-100 rounded-md">
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link to={`/course/${course.course._id}`}>
