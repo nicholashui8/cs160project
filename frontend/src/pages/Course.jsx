@@ -88,18 +88,30 @@ function Course(){
                         </div>
                     </div>
                 </div>
-
-                <div className='bg-gray-900 p-5 mx-auto mt-10 w-11/12 rounded-lg'>
-                    <div className='text-3xl font-bold'>
-                        Notifications
-                    </div>
-                </div>
                 
                 {/* Assignment */}
                 <div className='bg-gray-900 p-5 mx-auto mt-10 w-11/12 rounded-lg'>
-                    <div className='text-3xl font-bold'>
+                    {
+                        user.userType === 'instructor' ?
+                        (
+                            <div className="sm:flex items-center justify-between">
+                                <div className='text-3xl font-bold'>
+                                    Assignments
+                                </div>
+                                <Link className="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 mt-4 sm:mt-0 inline-flex items-start justify-start px-6 py-2 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded" to={`/course/${params.id}/assignments/create`}>
+                                    <p className="text-lg font-bold text-white">Edit</p>
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className='text-3xl font-bold'>
+                                Assignments
+                            </div>
+                        )
+                    }
+
+                    {/*<div className='text-3xl font-bold'>
                         Assignments
-                    </div>
+                </div>*/}
                     <div className="mt-8">
                         <table className='w-full table-auto'>
                             <thead>

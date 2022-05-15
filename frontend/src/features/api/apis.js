@@ -112,9 +112,32 @@ const dropCoursesFromUser = async (data, token) => {
     return response.data
 }
 
+const deleteCourse = async (courseId, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.delete(COURSE_API_URL + `user/courses-delete/${courseId}`, config)
+    return response.data
+}
+
 /* Assignment API Calls */
 const ASSIGNMENT_API_URL = '/assignment-api/'
 
+const createAssignment = async(assignmentData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.post(ASSIGNMENT_API_URL + 'assignment', assignmentData, config)
+    return response.data
+}
 // Get assignment from a course
 const getAssignment = async (data, token) => {
     const config = {
@@ -126,6 +149,33 @@ const getAssignment = async (data, token) => {
     }
     
     const response = await axios.get(ASSIGNMENT_API_URL + `course/${data.courseId}/assignment/${data.assignmentId}`, config)
+    return response.data
+}
+
+// Get all assignments from a course
+const getAssignments = async (courseId, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    
+    const response = await axios.get(ASSIGNMENT_API_URL + `course/${courseId}/assignments`, config)
+    return response.data
+}
+
+const deleteAssignment = async (data, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    }
+    
+    const response = await axios.delete(ASSIGNMENT_API_URL + `course/${data.courseId}/delete/assignment/${data.assignmentId}`, config)
     return response.data
 }
 
@@ -144,6 +194,40 @@ const createSubmission = async (submissionData, token) => {
     return response.data
 }
 
+// update submission by adding the new file path to the array
+const updateSubmission = async (submissionData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.put(SUBMISSION_API_URL + 'submission/update', submissionData, config)
+    return response.data
+}
+
+const getSubmissionsFromAssignment = async (data, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.get(SUBMISSION_API_URL + `course/${data.courseId}/assignments/${data.assignmentId}/submissions`, config)
+    return response.data
+}
+
+const gradeSubmission = async (submissionData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.put(SUBMISSION_API_URL + 'submission/grade', submissionData, config)
+    return response.data
+}
+
 const apiServices = {
     register,
     login,
@@ -154,8 +238,15 @@ const apiServices = {
     getCoursesNotEnrolled,
     addCoursesToUser,
     dropCoursesFromUser,
+    deleteCourse,
+    createAssignment,
     getAssignment,
-    createSubmission
+    getAssignments,
+    deleteAssignment,
+    createSubmission,
+    updateSubmission,
+    getSubmissionsFromAssignment,
+    gradeSubmission
 }
 
 export default apiServices

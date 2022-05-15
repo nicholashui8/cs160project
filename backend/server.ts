@@ -14,7 +14,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-app.use('../frontend/public/files', express.static('files'))
+app.use('../frontend/public/assignmentFiles', express.static('assignmentFiles'))
+app.use('../frontend/public/syllabi', express.static('syllabi'))
 app.use('../frontend/public/submissions', express.static('submissions'))
 
 app.use('/user-api', require('./routes/userRoutes'))                // enables backend api calls involving user
@@ -25,4 +26,3 @@ app.use('/submission-api', require('./routes/submissionRoutes'))    // enables b
 app.use(errorHandler)
 
 app.listen(port, () => console.log(`Server started on port ${port}`))
-

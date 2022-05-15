@@ -11,6 +11,7 @@ const initialState = {
     isSuccessCourseCreated: false,  // for creaing a course;              Create Course page
     isSuccessAddingCourses: false,  // for adding course(s) to a user;    Enroll Course page
     isSuccessRemovingCourses: false,// for removing course(s) from a user;Drop Course page
+    isSuccessDeleteCourse: false,
     isLoading: false,
     message: ''
 }
@@ -81,6 +82,16 @@ export const removeCoursesFromUser = createAsyncThunk('courses/removeCoursesFrom
     }
 })
 
+export const deleteCourse = createAsyncThunk('courses/course-delete', async(courseId, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user.token
+        return await apiServices.deleteCourse(courseId, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 export const courseSlice = createSlice({
     name: 'courses',
     initialState,
@@ -92,6 +103,7 @@ export const courseSlice = createSlice({
             state.isSuccessCourseCreated = false  // for creaing a course;              Create Course page
             state.isSuccessAddingCourses = false
             state.isSuccessRemovingCourses = false
+            state.isSuccessDeleteCourse = false
             state.isLoading = false
             state.message = ''
         },
@@ -170,6 +182,18 @@ export const courseSlice = createSlice({
                 state.isSuccessRemovingCourses = true
             })
             .addCase(removeCoursesFromUser.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(deleteCourse.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(deleteCourse.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccessDeleteCourse = true
+            })
+            .addCase(deleteCourse.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

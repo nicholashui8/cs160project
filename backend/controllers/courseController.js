@@ -4,7 +4,7 @@ const path = require('path')
 
 const Assignment = require('../models/assignmentModel')
 const Course = require('../models/courseModel')
-const ObjectId = require('mongoose').Types.ObjectId;
+const ObjectId = require('mongoose').Types.ObjectId
 const Submission = require('../models/submissionModel')
 const User = require('../models/userModel')
 
@@ -51,7 +51,7 @@ const createCourse = asyncHandler(async (req, res) => {
         instructorName: user.name,
         createdByEmail: user.email,     
         createdById: user.schoolId,
-        syllabus: `${url}/files/${req.file.filename}` //'/backend/public/' + req.file.filename    //url + '/public/' + req.file.filename
+        syllabus: `${url}/syllabi/${req.file.filename}` //'/backend/public/' + req.file.filename    //url + '/public/' + req.file.filename
     })
 
     if (!course) {
@@ -66,7 +66,7 @@ const createCourse = asyncHandler(async (req, res) => {
 })
 
 // @description     Get a course from a user, for the course page
-// @route           GET /course-api/user/course
+// @route           GET /course-api/user/course/:id
 // @access          Private
 const getCourseFromUser = asyncHandler(async (req, res) => {
     const user = req.user
@@ -215,9 +215,61 @@ const dropCoursesFromUser = asyncHandler(async (req, res) => {
     res.status(200).json({success:true, data:user})
 })
 
+// @description     Delete course(s) from instructor, should also remove all submissions, and assignments that were created as well
+// @route           Delete /course-api/user/courses-delete/:courseId
+// @access          Private
+const deleteCourse = asyncHandler(async (req, res) => {
+    const user = req.user
+    const { courseId } = req.params
+
+    if (!user) {
+        res.status(400)
+        throw new Error('User not signed in and authenticated')
+    }
+
+    const course = await Course.findById(courseId)
+    if (!course) {
+        res.status(400)
+        throw new Error('Course does not exist')
+    }
+
+    /** Multi-step process of deleting a course
+     *  1. delete all submissions from each course assignment
+     *  2. deleate all assignments from the courese
+     *  3. remove the course reference from both instructor and student
+     *  4. delete the course
+     */
+    const assignments = course.assignments    
+    for (let index = 0; assignments && index < assignments.length; index++) {
+        
+        const submissions = assignments[index].submissions
+        for (let sub_index = 0; submissions && sub_index < submissions.length; sub_index++) {
+            await Assignment.findByIdAndUpdate(assignments[index], {$pull: {"submissions": new ObjectId(submissions[sub_index])}}, {safe: true, upsert: true, new: true})
+            await Submission.findByIdAndDelete(submissions[sub_index])
+        }
+
+        await Course.findByIdAndUpdate(courseId, {$pull: {"assignments": new ObjectId(assignments[index])}}, {safe: true, upsert: true, new: true})
+        await Assignment.findByIdAndDelete(assignments[index])
+    }
+
+    const users = await User.find()
+    for (let user_index = 0; user_index < users.length; user_index++) {
+        if (user.courses.includes(courseId)) {
+            await User.findByIdAndUpdate(users[user_index]._id, {$pull: {"courses": new ObjectId(courseId)}}, {safe: true, upsert: true, new: true})
+        }
+    }
+
+    //await User.findByIdAndUpdate(user._id, {$pull: {"courses": new ObjectId(courseId)}}, {safe: true, upsert: true, new: true})
+    await Course.findByIdAndDelete(courseId)
+
+    const instructor = await User.findById(user._id)
+    res.status(200).json({success: true, data: instructor})
+})
+
 module.exports = {
     addCoursesToUser,
     createCourse,
+    deleteCourse,
     dropCoursesFromUser,
     getCourseFromUser,
     getCoursesFromUser,
