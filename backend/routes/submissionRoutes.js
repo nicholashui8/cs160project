@@ -6,7 +6,10 @@ const router = express.Router()
 
 const {
     createSubmission,
-    createAssignmentSubmission
+    createAssignmentSubmission,
+    updateAssingmentSubmission,
+    getSubmissionsFromAssignment,
+    gradeSubmission
 } = require('../controllers/submissionController')
 
 const { protect } = require('../middleware/authMiddleware')
@@ -25,4 +28,7 @@ const upload = multer({ storage: storage })
 
 router.post('/submission-test', createSubmission)
 router.post('/submission', protect, upload.single('submissionFile'), createAssignmentSubmission)
+router.put('/submission/update', protect, upload.single('submissionFile'), updateAssingmentSubmission)
+router.get('/course/:courseId/assignments/:assignmentId/submissions', protect, getSubmissionsFromAssignment)
+router.put('/submission/grade', protect, gradeSubmission)
 module.exports = router

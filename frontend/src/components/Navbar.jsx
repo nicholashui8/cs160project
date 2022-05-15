@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -53,8 +53,6 @@ function Navbar() {
                                         <div className="text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">
                                             <Dropdown/>
                                         </div>
-
-                                        <a href="/messages" className="text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium">Messages</a>
                                     </div>
                                 </div>
                             </div>
@@ -123,16 +121,6 @@ function Navbar() {
                             <div className="text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                 <Dropdown/>
                             </div>
-                        </div>
-                        <div className="px-2 pt-2 pb-3 space-y-1">
-                                <Disclosure.Button
-                                    key={"Messages"}
-                                    as="a"
-                                    href={"/messages"}
-                                    className= 'text-black dark:text-slate-200 hover:bg-gray-500 dark:hover:bg-gray-700 hover:text-white block block px-3 py-2 rounded-md text-base font-medium'
-                                >
-                                    Messages
-                                </Disclosure.Button>
                         </div>
                     </Disclosure.Panel>
                 </>

@@ -23,8 +23,8 @@ const submissionSchema = mongoose.Schema({
     },
 
     submissionFile: {         // should store syllabus filename
-        type: String,
-        required: true
+        type: [String],
+        required: false
     },
 },
 {

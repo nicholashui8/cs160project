@@ -23,22 +23,22 @@ const courseSchema = mongoose.Schema({
 
     courseRoom: {       // ex) MH213
         type: String,
-        required: [false, "Please add the room for the course"]
+        required: [true, "Please add the room for the course"]
     },
 
     courseDates: {      // ex) M/T/W/Th/F
         type: String,
-        required: [false, "Please add the days for the course"]
+        required: [true, "Please add the days for the course"]
     },
 
     startTime: {       // ex) 2:15-3:30PM
         type: String,
-        required: [false, "Please add the start time for the course"]
+        required: [true, "Please add the start time for the course"]
     },
     
     endTime: {
         type: String,
-        required: [false, "Please add the end time for the course"]
+        required: [true, "Please add the end time for the course"]
     },
 
     instructorName: {

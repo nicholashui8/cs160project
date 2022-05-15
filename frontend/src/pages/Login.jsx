@@ -60,7 +60,7 @@ function Login() {
             <div className="bg-gray-200 dark:bg-gray-700 h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8">
                     <div>
-                        <h1 className="mt-3 text-center text-4xl font-extrabold text-cyan-500">CS160 Project</h1>
+                        <h1 className="mt-3 text-center text-4xl font-extrabold text-cyan-500">Portal</h1>
                         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-800 dark:text-white">Sign into your account</h2>
                         <p className="mt-2 text-center text-lg text-indigo-600">
                             Or{' '}

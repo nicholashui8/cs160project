@@ -44,7 +44,7 @@ function CreateCourse() {
     return () => {
       dispatch(reset())
     }
-  }, [user, isError, message, dispatch, navigate])
+  }, [user, isSuccessCourseCreated, isError, message, dispatch, navigate])
 
   const handleFileUpload = (e) => {
     setSelectedFile(e.target.files[0])
@@ -94,10 +94,10 @@ function CreateCourse() {
   }
 
   return (
-    <div>
+    <div className='flex flex-col h-screen overflow-hidden'>
       <Navbar />
       <div className='flex justify-center bg-gray-200 dark:bg-gray-700 h-screen overflow-scroll'>
-        <section className="max-w-screen-4xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
+        <section className="max-w-screen-2xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
             <h1 className="text-3xl font-bold text-white text-center capitalize dark:text-white">Create new Course</h1>
               <form onSubmit={onSubmit}>
                 <div className="grid grid-cols-1 gap-6 mt-7 sm:grid-cols-4">

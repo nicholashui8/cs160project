@@ -7,6 +7,7 @@ const router = express.Router()
 const {
     addCoursesToUser,
     createCourse,
+    deleteCourse,
     dropCoursesFromUser,
     getCourseFromUser,
     getCoursesFromUser,
@@ -17,7 +18,7 @@ const { protect } = require('../middleware/authMiddleware')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../frontend/public/files'))
+        cb(null, path.join(__dirname, '../../frontend/public/syllabi'))
     },
     filename: (req, file, cb) => {
         const fileName = file.originalname.toLowerCase().split(' ').join('-');
@@ -33,4 +34,6 @@ router.get('/user/courses', protect, getCoursesFromUser)
 router.put('/user/courses-enroll', protect, addCoursesToUser)
 router.put('/user/courses-drop', protect, dropCoursesFromUser)
 router.get('/user/courses-not-enrolled', protect, getCoursesNotEnrolledIn)
+router.delete('/user/courses-delete/:courseId', protect, deleteCourse)
+
 module.exports = router
