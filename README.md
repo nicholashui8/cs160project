@@ -5,14 +5,12 @@ use the command: npm run client to run the frontend part of the project <br>
 use the command: npm run dev to run both the backend and frontend <br>
 
 For logging into the web app use these credentials for testing/seeing new changes <br>
-email: student@gmail.com <br>
+email: student.test1@gmail.com <br>
 password: 0123 <br>
-schoolId: 0123 <br>
-name: student <br>
+name: Student Test1<br>
 
 To view from a different perspective and be able to create courses <br>
 Use these credentials <br> 
-email: professor@gmail.com <br>
+email: john.doe@gmail.com <br>
 Password: 123456 <br>
-schoolId: 1234 <br>
-name: professor <br>
+name: John Doe <br>
